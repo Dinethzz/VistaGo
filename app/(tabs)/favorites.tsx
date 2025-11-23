@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
-import { useFavorites } from '@/contexts/favorites-context';
-import { destinations } from '@/constants/destinations';
 import { DestinationCard } from '@/components/destination-card';
+import { destinations } from '@/constants/destinations';
+import { useFavorites } from '@/contexts/favorites-context';
+import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function FavoritesScreen() {
   const { favorites } = useFavorites();

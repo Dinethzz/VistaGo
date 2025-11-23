@@ -1,10 +1,10 @@
 import { Destination } from '@/constants/destinations';
+import { useFavorites } from '@/contexts/favorites-context';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useFavorites } from '@/contexts/favorites-context';
-import * as Haptics from 'expo-haptics';
 
 const { width } = Dimensions.get('window');
 

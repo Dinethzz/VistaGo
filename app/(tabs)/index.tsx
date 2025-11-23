@@ -11,7 +11,7 @@ export default function HomeScreen() {
 
   const categories = [
     { id: 'beach', name: 'Beach', icon: 'water' as const },
-    { id: 'mountain', name: 'Mountain', icon: 'mountain' as const },
+    { id: 'mountain', name: 'Mountain', icon: 'triangle' as const },
     { id: 'city', name: 'City', icon: 'business' as const },
     { id: 'adventure', name: 'Adventure', icon: 'rocket' as const },
     { id: 'cultural', name: 'Cultural', icon: 'book' as const },

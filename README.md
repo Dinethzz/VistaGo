@@ -1,8 +1,49 @@
-# Welcome to your Expo app 👋
+# VistaGo - Travel Destination App 🌍✈️
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A beautiful React Native mobile application for discovering and exploring travel destinations around the world. Built with Expo and featuring an intuitive UI for browsing destinations, searching, filtering, and viewing detailed information.
 
-## Get started
+## Features
+
+### 🏠 Home Screen
+- Featured destinations carousel
+- Popular destinations list
+- Category browsing (Beach, Mountain, City, Adventure, Cultural)
+- Quick search functionality
+- Beautiful destination cards with ratings and pricing
+
+### 🔍 Explore Screen
+- Advanced search with real-time filtering
+- Category filters (All, Beach, Mountain, City, Adventure, Cultural)
+- Sort by rating or price
+- Comprehensive destination listings
+- Interactive search with clear functionality
+
+### 📱 Destination Details
+- High-quality destination images
+- Detailed descriptions and information
+- Key statistics (Duration, Price, Category)
+- Highlights and activities
+- Best time to visit information
+- Booking functionality
+
+## Tech Stack
+
+- **React Native** - Cross-platform mobile development
+- **Expo** - Development platform and tools
+- **TypeScript** - Type-safe development
+- **Expo Router** - File-based routing
+- **Expo Vector Icons** - Beautiful icon library
+- **React Navigation** - Navigation solution
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm or yarn
+- Expo CLI (`npm install -g expo-cli`)
+
+### Installation
 
 1. Install dependencies
 
@@ -10,41 +51,125 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Start the development server
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+3. Run on your device
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   - Scan the QR code with **Expo Go** app (Android/iOS)
+   - Press `a` for Android emulator
+   - Press `i` for iOS simulator
+   - Press `w` for web browser
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Project Structure
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+VistaGo/
+├── app/
+│   ├── (tabs)/
+│   │   ├── index.tsx          # Home screen
+│   │   ├── explore.tsx        # Explore screen
+│   │   └── _layout.tsx        # Tab navigation layout
+│   ├── destination/
+│   │   └── [id].tsx           # Dynamic destination details
+│   └── _layout.tsx            # Root layout
+├── components/
+│   ├── destination-card.tsx   # Reusable destination card
+│   └── ui/                    # UI components
+├── constants/
+│   ├── destinations.ts        # Destination data and types
+│   └── theme.ts               # Theme configuration
+└── assets/                    # Images and fonts
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Key Features Implemented
 
-## Learn more
+### Data Model
+- Comprehensive destination type with all required fields
+- 10+ pre-populated destinations with real data
+- Categories: Beach, Mountain, City, Adventure, Cultural
+- Rich metadata including ratings, prices, durations, activities
 
-To learn more about developing your project with Expo, look at the following resources:
+### UI Components
+- Custom destination cards with images and overlays
+- Category chips and filters
+- Search bar with clear functionality
+- Sort controls (Rating/Price)
+- Responsive layouts
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Navigation
+- Tab-based navigation (Home & Explore)
+- Stack navigation for destination details
+- Smooth transitions and animations
+- Back navigation with custom buttons
 
-## Join the community
+### Functionality
+- Real-time search filtering
+- Category-based filtering
+- Dynamic sorting (rating/price)
+- Detailed destination views
+- Favorite functionality (UI ready)
+- Booking interface (UI ready)
 
-Join our community of developers creating universal apps.
+## Development
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Available Scripts
+
+- `npm start` - Start Expo development server
+- `npm run android` - Run on Android device/emulator
+- `npm run ios` - Run on iOS simulator
+- `npm run web` - Run in web browser
+- `npm run lint` - Run ESLint
+
+### Customization
+
+To add new destinations, edit `constants/destinations.ts`:
+
+```typescript
+{
+  id: 'unique-id',
+  name: 'Destination Name',
+  country: 'Country',
+  description: 'Description...',
+  image: 'https://image-url.com',
+  rating: 4.8,
+  price: 1500,
+  duration: '7 days',
+  category: 'beach',
+  highlights: ['...'],
+  bestTimeToVisit: '...',
+  activities: ['...']
+}
+```
+
+## Future Enhancements
+
+- [ ] User authentication
+- [ ] Booking system integration
+- [ ] Favorites persistence
+- [ ] Social sharing
+- [ ] User reviews and ratings
+- [ ] Map integration
+- [ ] Price comparison
+- [ ] Travel itinerary planner
+- [ ] Offline mode
+- [ ] Push notifications
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Contact
+
+For questions or feedback, please reach out through GitHub issues.
+
+---
+
+Made with ❤️ using React Native and Expo

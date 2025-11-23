@@ -1,112 +1,321 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
+import { destinations, Destination } from '@/constants/destinations';
+import { DestinationCard } from '@/components/destination-card';
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+type CategoryType = 'all' | 'beach' | 'mountain' | 'city' | 'adventure' | 'cultural';
 
-export default function TabTwoScreen() {
+export default function ExploreScreen() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('all');
+  const [sortBy, setSortBy] = useState<'rating' | 'price'>('rating');
+
+  const categories: { id: CategoryType; name: string; icon: any }[] = [
+    { id: 'all', name: 'All', icon: 'grid-outline' },
+    { id: 'beach', name: 'Beach', icon: 'water-outline' },
+    { id: 'mountain', name: 'Mountain', icon: 'trending-up-outline' },
+    { id: 'city', name: 'City', icon: 'business-outline' },
+    { id: 'adventure', name: 'Adventure', icon: 'rocket-outline' },
+    { id: 'cultural', name: 'Cultural', icon: 'book-outline' },
+  ];
+
+  const filteredDestinations = useMemo(() => {
+    let filtered = destinations;
+
+    // Filter by search query
+    if (searchQuery) {
+      filtered = filtered.filter(dest => 
+        dest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        dest.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        dest.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(dest => dest.category === selectedCategory);
+    }
+
+    // Sort
+    filtered = [...filtered].sort((a, b) => {
+      if (sortBy === 'rating') {
+        return b.rating - a.rating;
+      } else {
+        return a.price - b.price;
+      }
+    });
+
+    return filtered;
+  }, [searchQuery, selectedCategory, sortBy]);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Explore
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <StatusBar style="dark" />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Explore</Text>
+        <Text style={styles.subtitle}>Discover amazing destinations</Text>
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <Ionicons name="search-outline" size={20} color="#999" />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search destinations..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholderTextColor="#999"
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <Ionicons name="close-circle" size={20} color="#999" />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+
+        {/* Categories */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesContainer}
+        >
+          {categories.map((category) => (
+            <TouchableOpacity
+              key={category.id}
+              style={[
+                styles.categoryChip,
+                selectedCategory === category.id && styles.categoryChipActive
+              ]}
+              onPress={() => setSelectedCategory(category.id)}
+            >
+              <Ionicons 
+                name={category.icon} 
+                size={18} 
+                color={selectedCategory === category.id ? '#fff' : '#007AFF'} 
+              />
+              <Text style={[
+                styles.categoryText,
+                selectedCategory === category.id && styles.categoryTextActive
+              ]}>
+                {category.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Sort Options */}
+        <View style={styles.sortContainer}>
+          <Text style={styles.sortLabel}>Sort by:</Text>
+          <View style={styles.sortButtons}>
+            <TouchableOpacity
+              style={[
+                styles.sortButton,
+                sortBy === 'rating' && styles.sortButtonActive
+              ]}
+              onPress={() => setSortBy('rating')}
+            >
+              <Ionicons 
+                name="star" 
+                size={16} 
+                color={sortBy === 'rating' ? '#fff' : '#007AFF'} 
+              />
+              <Text style={[
+                styles.sortButtonText,
+                sortBy === 'rating' && styles.sortButtonTextActive
+              ]}>
+                Rating
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.sortButton,
+                sortBy === 'price' && styles.sortButtonActive
+              ]}
+              onPress={() => setSortBy('price')}
+            >
+              <Ionicons 
+                name="pricetag" 
+                size={16} 
+                color={sortBy === 'price' ? '#fff' : '#007AFF'} 
+              />
+              <Text style={[
+                styles.sortButtonText,
+                sortBy === 'price' && styles.sortButtonTextActive
+              ]}>
+                Price
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Results */}
+        <View style={styles.resultsContainer}>
+          <Text style={styles.resultsText}>
+            {filteredDestinations.length} {filteredDestinations.length === 1 ? 'destination' : 'destinations'} found
+          </Text>
+        </View>
+
+        {/* Destinations List */}
+        <View style={styles.listContainer}>
+          {filteredDestinations.length > 0 ? (
+            filteredDestinations.map((destination) => (
+              <DestinationCard 
+                key={destination.id} 
+                destination={destination}
+              />
+            ))
+          ) : (
+            <View style={styles.emptyState}>
+              <Ionicons name="search-outline" size={64} color="#ccc" />
+              <Text style={styles.emptyStateText}>No destinations found</Text>
+              <Text style={styles.emptyStateSubtext}>Try adjusting your filters</Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
   },
-  titleContainer: {
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#666',
+  },
+  searchContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 12,
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: '#333',
+  },
+  categoriesContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    gap: 8,
+  },
+  categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: '#F0F8FF',
+    gap: 6,
+  },
+  categoryChipActive: {
+    backgroundColor: '#007AFF',
+  },
+  categoryText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#007AFF',
+  },
+  categoryTextActive: {
+    color: '#fff',
+  },
+  sortContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    gap: 12,
+  },
+  sortLabel: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+  },
+  sortButtons: {
     flexDirection: 'row',
     gap: 8,
+  },
+  sortButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: '#F0F8FF',
+    gap: 4,
+  },
+  sortButtonActive: {
+    backgroundColor: '#007AFF',
+  },
+  sortButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#007AFF',
+  },
+  sortButtonTextActive: {
+    color: '#fff',
+  },
+  resultsContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+  },
+  resultsText: {
+    fontSize: 14,
+    color: '#666',
+  },
+  listContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  emptyStateText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#999',
+    marginTop: 16,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: '#bbb',
+    marginTop: 4,
   },
 });

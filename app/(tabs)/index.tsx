@@ -1,10 +1,10 @@
 import { DestinationCard } from '@/components/destination-card';
 import { destinations } from '@/constants/destinations';
+import { useAuth } from '@/contexts/auth-context';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
-import { useAuth } from '@/contexts/auth-context';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
   const { user } = useAuth();

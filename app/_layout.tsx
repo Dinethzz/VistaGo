@@ -4,8 +4,8 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-import { FavoritesProvider } from '@/contexts/favorites-context';
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
+import { FavoritesProvider } from '@/contexts/favorites-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {

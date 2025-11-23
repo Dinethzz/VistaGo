@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { DestinationCard } from '@/components/destination-card';
+import { destinations } from '@/constants/destinations';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { destinations, Destination } from '@/constants/destinations';
-import { DestinationCard } from '@/components/destination-card';
+import React, { useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type CategoryType = 'all' | 'beach' | 'mountain' | 'city' | 'adventure' | 'cultural';
 

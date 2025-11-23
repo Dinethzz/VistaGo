@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import { DestinationCard } from '@/components/destination-card';
+import { destinations } from '@/constants/destinations';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { destinations } from '@/constants/destinations';
-import { DestinationCard } from '@/components/destination-card';
+import React from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
   const featuredDestinations = destinations.slice(0, 3);

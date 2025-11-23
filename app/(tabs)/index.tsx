@@ -3,9 +3,11 @@ import { destinations } from '@/constants/destinations';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function HomeScreen() {
+  const { user } = useAuth();
   const featuredDestinations = destinations.slice(0, 3);
   const popularDestinations = destinations.slice(3, 6);
 
@@ -23,9 +25,17 @@ export default function HomeScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <View>
-            <Text style={styles.greeting}>Hello, Traveler!</Text>
-            <Text style={styles.title}>Where do you want to go?</Text>
+          <View style={styles.headerLeft}>
+            {user?.image && (
+              <Image 
+                source={{ uri: user.image }} 
+                style={styles.profileImage}
+              />
+            )}
+            <View>
+              <Text style={styles.greeting}>Hello, {user?.firstName || 'Traveler'}!</Text>
+              <Text style={styles.title}>Where do you want to go?</Text>
+            </View>
           </View>
           <TouchableOpacity style={styles.notificationButton}>
             <Ionicons name="notifications-outline" size={24} color="#333" />
@@ -113,6 +123,18 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 20,
     backgroundColor: '#fff',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  profileImage: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#f0f0f0',
   },
   greeting: {
     fontSize: 14,

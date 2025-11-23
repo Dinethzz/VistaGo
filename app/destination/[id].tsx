@@ -4,12 +4,15 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useFavorites } from '@/contexts/favorites-context';
+import * as Haptics from 'expo-haptics';
 
 const { width, height } = Dimensions.get('window');
 
 export default function DestinationDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { isFavorite, toggleFavorite } = useFavorites();
   
   const destination = destinations.find(d => d.id === id);
 
@@ -20,6 +23,13 @@ export default function DestinationDetails() {
       </View>
     );
   }
+
+  const favorite = isFavorite(destination.id);
+
+  const handleFavoritePress = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await toggleFavorite(destination.id);
+  };
 
   return (
     <View style={styles.container}>
@@ -38,8 +48,15 @@ export default function DestinationDetails() {
             >
               <Ionicons name="arrow-back" size={24} color="#fff" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.favoriteButton}>
-              <Ionicons name="heart-outline" size={24} color="#fff" />
+            <TouchableOpacity 
+              style={styles.favoriteButton}
+              onPress={handleFavoritePress}
+            >
+              <Ionicons 
+                name={favorite ? 'heart' : 'heart-outline'} 
+                size={24} 
+                color={favorite ? '#FF3B30' : '#fff'} 
+              />
             </TouchableOpacity>
           </View>
         </View>

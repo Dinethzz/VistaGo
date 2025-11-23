@@ -3,6 +3,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useFavorites } from '@/contexts/favorites-context';
+import * as Haptics from 'expo-haptics';
 
 const { width } = Dimensions.get('window');
 
@@ -16,6 +18,7 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
   variant = 'large' 
 }) => {
   const router = useRouter();
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const handlePress = () => {
     router.push({
@@ -24,7 +27,14 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
     });
   };
 
+  const handleFavoritePress = async (e: any) => {
+    e.stopPropagation();
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await toggleFavorite(destination.id);
+  };
+
   const cardWidth = variant === 'large' ? width - 32 : width * 0.7;
+  const favorite = isFavorite(destination.id);
 
   return (
     <TouchableOpacity 
@@ -38,8 +48,21 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
         resizeMode="cover"
       />
       <View style={styles.overlay}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{destination.category}</Text>
+        <View style={styles.topRow}>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{destination.category}</Text>
+          </View>
+          <TouchableOpacity 
+            style={styles.favoriteButton}
+            onPress={handleFavoritePress}
+            activeOpacity={0.8}
+          >
+            <Ionicons 
+              name={favorite ? 'heart' : 'heart-outline'} 
+              size={20} 
+              color={favorite ? '#FF3B30' : '#fff'} 
+            />
+          </TouchableOpacity>
         </View>
         <View style={styles.ratingContainer}>
           <Ionicons name="star" size={16} color="#FFD700" />
@@ -91,6 +114,10 @@ const styles = StyleSheet.create({
     top: 12,
     left: 12,
     right: 12,
+    flexDirection: 'column',
+    gap: 8,
+  },
+  topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
@@ -107,6 +134,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textTransform: 'capitalize',
   },
+  favoriteButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   ratingContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     flexDirection: 'row',
@@ -115,6 +150,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     gap: 4,
+    alignSelf: 'flex-end',
   },
   rating: {
     fontSize: 14,

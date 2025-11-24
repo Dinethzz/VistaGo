@@ -1,3 +1,19 @@
+/**
+ * Destination Card Component
+ * 
+ * A reusable card component that displays destination information
+ * with image, title, location, rating, and favorite functionality.
+ * 
+ * Features:
+ * - Two variants: large (full width) and small (70% width)
+ * - Favorite toggle with haptic feedback
+ * - Navigation to destination details
+ * - Dark mode support
+ * - Responsive design
+ * 
+ * @component
+ */
+
 import { Destination } from '@/constants/destinations';
 import { useFavorites } from '@/contexts/favorites-context';
 import { useTheme } from '@/contexts/theme-context';
@@ -9,11 +25,23 @@ import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'rea
 
 const { width } = Dimensions.get('window');
 
+/**
+ * Props for DestinationCard component
+ */
 interface DestinationCardProps {
+  /** Destination data to display */
   destination: Destination;
+  /** Card size variant - 'large' for full width, 'small' for 70% width */
   variant?: 'large' | 'small';
 }
 
+/**
+ * Destination card component that displays destination information
+ * and handles navigation and favorite actions.
+ * 
+ * @param {DestinationCardProps} props - Component props
+ * @returns {React.ReactElement} Rendered destination card
+ */
 export const DestinationCard: React.FC<DestinationCardProps> = ({ 
   destination, 
   variant = 'large' 
@@ -22,6 +50,9 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
   const { isFavorite, toggleFavorite } = useFavorites();
   const { isDark } = useTheme();
 
+  /**
+   * Navigates to the destination detail page
+   */
   const handlePress = () => {
     router.push({
       pathname: '/destination/[id]',
@@ -29,6 +60,12 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
     });
   };
 
+  /**
+   * Toggles the favorite status of the destination
+   * Stops event propagation to prevent navigation
+   * 
+   * @param {any} e - Touch event
+   */
   const handleFavoritePress = async (e: any) => {
     e.stopPropagation();
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

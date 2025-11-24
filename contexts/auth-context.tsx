@@ -1,18 +1,19 @@
+/**
+ * Authentication Context
+ * Manages user authentication state and operations
+ * 
+ * Features:
+ * - Secure token storage using SecureStore
+ * - User session management
+ * - Login/Register/Logout operations
+ * - Persistent authentication state
+ */
+
+import { API_CONFIG, STORAGE_KEYS } from '@/constants/app';
+import { LoginResponse, RegisterData, User } from '@/types';
+import { createApiError, safeJsonParse } from '@/utils/helpers';
 import * as SecureStore from 'expo-secure-store';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-
-const TOKEN_KEY = 'auth_token';
-const USER_KEY = 'auth_user';
-
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  image: string;
-}
 
 interface AuthContextType {
   user: User | null;
@@ -21,14 +22,6 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
-}
-
-interface RegisterData {
-  username: string;
-  password: string;
-  email: string;
-  firstName: string;
-  lastName: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -45,27 +38,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     loadStoredAuth();
   }, []);
 
-  const loadStoredAuth = async () => {
+  const loadStoredAuth = async (): Promise<void> => {
     try {
       const [token, userJson] = await Promise.all([
-        SecureStore.getItemAsync(TOKEN_KEY),
-        SecureStore.getItemAsync(USER_KEY),
+        SecureStore.getItemAsync(STORAGE_KEYS.AUTH_TOKEN),
+        SecureStore.getItemAsync(STORAGE_KEYS.AUTH_USER),
       ]);
 
       if (token && userJson) {
-        const storedUser = JSON.parse(userJson);
-        setUser(storedUser);
+        const storedUser = safeJsonParse<User | null>(userJson, null);
+        if (storedUser) {
+          setUser(storedUser);
+        }
       }
     } catch (error) {
-      console.error('Error loading auth:', error);
+      const apiError = createApiError(error);
+      console.error('Error loading auth:', apiError.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, password: string): Promise<void> => {
     try {
-      const response = await fetch('https://dummyjson.com/auth/login', {
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.LOGIN}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -79,7 +75,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error('Invalid credentials');
       }
 
-      const data = await response.json();
+      const data: LoginResponse = await response.json();
 
       const userData: User = {
         id: data.id,
@@ -95,14 +91,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const token = String(data.token || data.accessToken || '');
       
       await Promise.all([
-        SecureStore.setItemAsync(TOKEN_KEY, token),
-        SecureStore.setItemAsync(USER_KEY, JSON.stringify(userData)),
+        SecureStore.setItemAsync(STORAGE_KEYS.AUTH_TOKEN, token),
+        SecureStore.setItemAsync(STORAGE_KEYS.AUTH_USER, JSON.stringify(userData)),
       ]);
 
       setUser(userData);
     } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+      const apiError = createApiError(error);
+      console.error('Login error:', apiError.message);
+      throw new Error(apiError.message);
     }
   };
 
@@ -125,21 +122,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Using DummyJSON test credentials
       await login('emilys', 'emilyspass');
     } catch (error) {
-      console.error('Registration error:', error);
-      throw error;
+      const apiError = createApiError(error);
+      console.error('Registration error:', apiError.message);
+      throw new Error(apiError.message);
     }
   };
 
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     try {
       await Promise.all([
-        SecureStore.deleteItemAsync(TOKEN_KEY),
-        SecureStore.deleteItemAsync(USER_KEY),
+        SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_TOKEN),
+        SecureStore.deleteItemAsync(STORAGE_KEYS.AUTH_USER),
       ]);
       setUser(null);
     } catch (error) {
-      console.error('Logout error:', error);
-      throw error;
+      const apiError = createApiError(error);
+      console.error('Logout error:', apiError.message);
+      throw new Error(apiError.message);
     }
   };
 

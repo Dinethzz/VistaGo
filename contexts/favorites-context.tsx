@@ -1,7 +1,20 @@
+/**
+ * Favorites Context
+ * 
+ * Manages the user's favorite destinations with persistent storage.
+ * 
+ * Features:
+ * - Add/remove destinations from favorites
+ * - Check if a destination is favorited
+ * - Toggle favorite status
+ * - Persistent storage using AsyncStorage
+ * - Type-safe operations
+ */
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-
-const FAVORITES_KEY = '@vistago_favorites';
+import { STORAGE_KEYS } from '@/constants/app';
+import { createApiError, safeJsonParse } from '@/utils/helpers';
 
 interface FavoritesContextType {
   favorites: string[];
@@ -26,25 +39,29 @@ export function FavoritesProvider({ children }: FavoritesProviderProps) {
     loadFavorites();
   }, []);
 
-  const loadFavorites = async () => {
+  const loadFavorites = async (): Promise<void> => {
     try {
-      const stored = await AsyncStorage.getItem(FAVORITES_KEY);
+      const stored = await AsyncStorage.getItem(STORAGE_KEYS.FAVORITES);
       if (stored) {
-        setFavorites(JSON.parse(stored));
+        const parsed = safeJsonParse<string[]>(stored, []);
+        setFavorites(parsed);
       }
     } catch (error) {
-      console.error('Error loading favorites:', error);
+      const apiError = createApiError(error);
+      console.error('Error loading favorites:', apiError.message);
     } finally {
       setIsLoaded(true);
     }
   };
 
-  const saveFavorites = async (newFavorites: string[]) => {
+  const saveFavorites = async (newFavorites: string[]): Promise<void> => {
     try {
-      await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
+      await AsyncStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(newFavorites));
       setFavorites(newFavorites);
     } catch (error) {
-      console.error('Error saving favorites:', error);
+      const apiError = createApiError(error);
+      console.error('Error saving favorites:', apiError.message);
+      throw new Error(apiError.message);
     }
   };
 

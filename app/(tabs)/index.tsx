@@ -42,7 +42,7 @@ export default function HomeScreen() {
             </View>
           </View>
           <TouchableOpacity style={[styles.notificationButton, isDark && styles.notificationButtonDark]}>
-            <Ionicons name="notifications-outline" size={24} color="#000" />
+            <Ionicons name="notifications-outline" size={24} color={isDark ? '#fff' : '#000'} />
           </TouchableOpacity>
         </View>
 

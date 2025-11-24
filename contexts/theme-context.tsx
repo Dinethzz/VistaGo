@@ -1,10 +1,21 @@
+/**
+ * Theme Context
+ * 
+ * Manages the application's color scheme and theme preferences.
+ * 
+ * Features:
+ * - System/Light/Dark theme modes
+ * - Automatic system theme detection
+ * - Persistent theme storage
+ * - Type-safe theme operations
+ */
+
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-
-const THEME_KEY = '@vistago_theme';
-
-type ColorScheme = 'light' | 'dark' | 'system';
+import { STORAGE_KEYS } from '@/constants/app';
+import { ColorScheme } from '@/types';
+import { createApiError } from '@/utils/helpers';
 
 interface ThemeContextType {
   colorScheme: 'light' | 'dark';
@@ -29,25 +40,28 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     loadTheme();
   }, []);
 
-  const loadTheme = async () => {
+  const loadTheme = async (): Promise<void> => {
     try {
-      const saved = await AsyncStorage.getItem(THEME_KEY);
-      if (saved) {
+      const saved = await AsyncStorage.getItem(STORAGE_KEYS.THEME);
+      if (saved && (saved === 'light' || saved === 'dark' || saved === 'system')) {
         setThemeModeState(saved as ColorScheme);
       }
     } catch (error) {
-      console.error('Error loading theme:', error);
+      const apiError = createApiError(error);
+      console.error('Error loading theme:', apiError.message);
     } finally {
       setIsLoaded(true);
     }
   };
 
-  const setThemeMode = async (mode: ColorScheme) => {
+  const setThemeMode = async (mode: ColorScheme): Promise<void> => {
     try {
-      await AsyncStorage.setItem(THEME_KEY, mode);
+      await AsyncStorage.setItem(STORAGE_KEYS.THEME, mode);
       setThemeModeState(mode);
     } catch (error) {
-      console.error('Error saving theme:', error);
+      const apiError = createApiError(error);
+      console.error('Error saving theme:', apiError.message);
+      throw new Error(apiError.message);
     }
   };
 

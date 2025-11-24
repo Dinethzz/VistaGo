@@ -1,5 +1,6 @@
 import { Destination } from '@/constants/destinations';
 import { useFavorites } from '@/contexts/favorites-context';
+import { useTheme } from '@/contexts/theme-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
@@ -19,6 +20,7 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
 }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { isDark } = useTheme();
 
   const handlePress = () => {
     router.push({
@@ -38,7 +40,7 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
 
   return (
     <TouchableOpacity 
-      style={[styles.card, { width: cardWidth }]} 
+      style={[styles.card, { width: cardWidth }, isDark && styles.cardDark]} 
       onPress={handlePress}
       activeOpacity={0.9}
     >
@@ -64,28 +66,28 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
             />
           </TouchableOpacity>
         </View>
-        <View style={styles.ratingContainer}>
+        <View style={[styles.ratingContainer, isDark && styles.ratingContainerDark]}>
           <Ionicons name="star" size={16} color="#FFD700" />
-          <Text style={styles.rating}>{destination.rating}</Text>
+          <Text style={[styles.rating, isDark && styles.ratingDark]}>{destination.rating}</Text>
         </View>
       </View>
       <View style={styles.content}>
-        <Text style={styles.name}>{destination.name}</Text>
+        <Text style={[styles.name, isDark && styles.nameDark]}>{destination.name}</Text>
         <View style={styles.locationRow}>
-          <Ionicons name="location-outline" size={16} color="#666" />
-          <Text style={styles.country}>{destination.country}</Text>
+          <Ionicons name="location-outline" size={16} color={isDark ? '#999' : '#666'} />
+          <Text style={[styles.country, isDark && styles.countryDark]}>{destination.country}</Text>
         </View>
-        <Text style={styles.description} numberOfLines={2}>
+        <Text style={[styles.description, isDark && styles.descriptionDark]} numberOfLines={2}>
           {destination.description}
         </Text>
-        <View style={styles.footer}>
+        <View style={[styles.footer, isDark && styles.footerDark]}>
           <View style={styles.priceContainer}>
-            <Text style={styles.priceLabel}>From</Text>
+            <Text style={[styles.priceLabel, isDark && styles.priceLabelDark]}>From</Text>
             <Text style={styles.price}>${destination.price}</Text>
           </View>
           <View style={styles.durationContainer}>
-            <Ionicons name="time-outline" size={16} color="#666" />
-            <Text style={styles.duration}>{destination.duration}</Text>
+            <Ionicons name="time-outline" size={16} color={isDark ? '#999' : '#666'} />
+            <Text style={[styles.duration, isDark && styles.durationDark]}>{destination.duration}</Text>
           </View>
         </View>
       </View>
@@ -212,5 +214,33 @@ const styles = StyleSheet.create({
   duration: {
     fontSize: 14,
     color: '#666',
+  },
+  // Dark mode styles
+  cardDark: {
+    backgroundColor: '#1c1c1e',
+  },
+  ratingContainerDark: {
+    backgroundColor: 'rgba(28, 28, 30, 0.9)',
+  },
+  ratingDark: {
+    color: '#fff',
+  },
+  nameDark: {
+    color: '#fff',
+  },
+  countryDark: {
+    color: '#999',
+  },
+  descriptionDark: {
+    color: '#999',
+  },
+  footerDark: {
+    borderTopColor: '#2c2c2e',
+  },
+  priceLabelDark: {
+    color: '#666',
+  },
+  durationDark: {
+    color: '#999',
   },
 });

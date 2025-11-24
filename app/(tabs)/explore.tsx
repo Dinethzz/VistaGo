@@ -1,5 +1,6 @@
 import { DestinationCard } from '@/components/destination-card';
 import { destinations } from '@/constants/destinations';
+import { useTheme } from '@/contexts/theme-context';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import React, { useMemo, useState } from 'react';
@@ -8,6 +9,7 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 type CategoryType = 'all' | 'beach' | 'mountain' | 'city' | 'adventure' | 'cultural';
 
 export default function ExploreScreen() {
+  const { isDark } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>('all');
   const [sortBy, setSortBy] = useState<'rating' | 'price'>('rating');
@@ -51,30 +53,30 @@ export default function ExploreScreen() {
   }, [searchQuery, selectedCategory, sortBy]);
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="dark" />
+    <View style={[styles.container, isDark && styles.containerDark]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Explore</Text>
-        <Text style={styles.subtitle}>Discover amazing destinations</Text>
+      <View style={[styles.header, isDark && styles.headerDark]}>
+        <Text style={[styles.title, isDark && styles.titleDark]}>Explore</Text>
+        <Text style={[styles.subtitle, isDark && styles.subtitleDark]}>Discover amazing destinations</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Ionicons name="search-outline" size={20} color="#999" />
+          <View style={[styles.searchBar, isDark && styles.searchBarDark]}>
+            <Ionicons name="search-outline" size={20} color={isDark ? '#666' : '#999'} />
             <TextInput
-              style={styles.searchInput}
+              style={[styles.searchInput, isDark && styles.searchInputDark]}
               placeholder="Search destinations..."
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholderTextColor="#999"
+              placeholderTextColor={isDark ? '#666' : '#999'}
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <Ionicons name="close-circle" size={20} color="#999" />
+                <Ionicons name="close-circle" size={20} color={isDark ? '#666' : '#999'} />
               </TouchableOpacity>
             )}
           </View>
@@ -91,7 +93,8 @@ export default function ExploreScreen() {
               key={category.id}
               style={[
                 styles.categoryChip,
-                selectedCategory === category.id && styles.categoryChipActive
+                selectedCategory === category.id && styles.categoryChipActive,
+                isDark && styles.categoryChipDark,
               ]}
               onPress={() => setSelectedCategory(category.id)}
             >
@@ -112,12 +115,13 @@ export default function ExploreScreen() {
 
         {/* Sort Options */}
         <View style={styles.sortContainer}>
-          <Text style={styles.sortLabel}>Sort by:</Text>
+          <Text style={[styles.sortLabel, isDark && styles.sortLabelDark]}>Sort by:</Text>
           <View style={styles.sortButtons}>
             <TouchableOpacity
               style={[
                 styles.sortButton,
-                sortBy === 'rating' && styles.sortButtonActive
+                sortBy === 'rating' && styles.sortButtonActive,
+                isDark && styles.sortButtonDark,
               ]}
               onPress={() => setSortBy('rating')}
             >
@@ -136,7 +140,8 @@ export default function ExploreScreen() {
             <TouchableOpacity
               style={[
                 styles.sortButton,
-                sortBy === 'price' && styles.sortButtonActive
+                sortBy === 'price' && styles.sortButtonActive,
+                isDark && styles.sortButtonDark,
               ]}
               onPress={() => setSortBy('price')}
             >
@@ -157,7 +162,7 @@ export default function ExploreScreen() {
 
         {/* Results */}
         <View style={styles.resultsContainer}>
-          <Text style={styles.resultsText}>
+          <Text style={[styles.resultsText, isDark && styles.resultsTextDark]}>
             {filteredDestinations.length} {filteredDestinations.length === 1 ? 'destination' : 'destinations'} found
           </Text>
         </View>
@@ -173,9 +178,9 @@ export default function ExploreScreen() {
             ))
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="search-outline" size={64} color="#ccc" />
-              <Text style={styles.emptyStateText}>No destinations found</Text>
-              <Text style={styles.emptyStateSubtext}>Try adjusting your filters</Text>
+              <Ionicons name="search-outline" size={64} color={isDark ? '#444' : '#ccc'} />
+              <Text style={[styles.emptyStateText, isDark && styles.emptyStateTextDark]}>No destinations found</Text>
+              <Text style={[styles.emptyStateSubtext, isDark && styles.emptyStateSubtextDark]}>Try adjusting your filters</Text>
             </View>
           )}
         </View>
@@ -317,5 +322,42 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#bbb',
     marginTop: 4,
+  },
+  // Dark mode styles
+  containerDark: {
+    backgroundColor: '#000',
+  },
+  headerDark: {
+    backgroundColor: '#1c1c1e',
+  },
+  titleDark: {
+    color: '#fff',
+  },
+  subtitleDark: {
+    color: '#999',
+  },
+  searchBarDark: {
+    backgroundColor: '#1c1c1e',
+  },
+  searchInputDark: {
+    color: '#fff',
+  },
+  categoryChipDark: {
+    backgroundColor: '#2c2c2e',
+  },
+  sortLabelDark: {
+    color: '#999',
+  },
+  sortButtonDark: {
+    backgroundColor: '#2c2c2e',
+  },
+  resultsTextDark: {
+    color: '#999',
+  },
+  emptyStateTextDark: {
+    color: '#666',
+  },
+  emptyStateSubtextDark: {
+    color: '#444',
   },
 });

@@ -1,4 +1,5 @@
 import { useAuth } from '@/contexts/auth-context';
+import { useTheme } from '@/contexts/theme-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -7,6 +8,7 @@ import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } fr
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
+  const { themeMode, setThemeMode, isDark } = useTheme();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -35,26 +37,32 @@ export default function ProfileScreen() {
     { id: 'about', icon: 'information-circle-outline', label: 'About', badge: null },
   ];
 
+  const themeOptions = [
+    { value: 'system' as const, label: 'System', icon: 'phone-portrait-outline' },
+    { value: 'light' as const, label: 'Light', icon: 'sunny-outline' },
+    { value: 'dark' as const, label: 'Dark', icon: 'moon-outline' },
+  ];
+
   return (
-    <View style={styles.container}>
-      <StatusBar style="dark" />
+    <View style={[styles.container, isDark && styles.containerDark]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Profile</Text>
+        <View style={[styles.header, isDark && styles.headerDark]}>
+          <Text style={[styles.headerTitle, isDark && styles.headerTitleDark]}>Profile</Text>
         </View>
 
         {/* Profile Card */}
-        <View style={styles.profileCard}>
+        <View style={[styles.profileCard, isDark && styles.profileCardDark]}>
           <Image 
             source={{ uri: user?.image || 'https://via.placeholder.com/150' }} 
             style={styles.avatar}
           />
-          <Text style={styles.name}>
+          <Text style={[styles.name, isDark && styles.nameDark]}>
             {user?.firstName} {user?.lastName}
           </Text>
           <Text style={styles.username}>@{user?.username}</Text>
-          <Text style={styles.email}>{user?.email}</Text>
+          <Text style={[styles.email, isDark && styles.emailDark]}>{user?.email}</Text>
 
           <TouchableOpacity style={styles.editButton}>
             <Ionicons name="pencil" size={16} color="#007AFF" />
@@ -63,46 +71,79 @@ export default function ProfileScreen() {
         </View>
 
         {/* Stats */}
-        <View style={styles.statsContainer}>
+        <View style={[styles.statsContainer, isDark && styles.statsContainerDark]}>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>12</Text>
-            <Text style={styles.statLabel}>Trips</Text>
+            <Text style={[styles.statValue, isDark && styles.statValueDark]}>12</Text>
+            <Text style={[styles.statLabel, isDark && styles.statLabelDark]}>Trips</Text>
           </View>
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, isDark && styles.statDividerDark]} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>24</Text>
-            <Text style={styles.statLabel}>Favorites</Text>
+            <Text style={[styles.statValue, isDark && styles.statValueDark]}>24</Text>
+            <Text style={[styles.statLabel, isDark && styles.statLabelDark]}>Favorites</Text>
           </View>
-          <View style={styles.statDivider} />
+          <View style={[styles.statDivider, isDark && styles.statDividerDark]} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>8</Text>
-            <Text style={styles.statLabel}>Reviews</Text>
+            <Text style={[styles.statValue, isDark && styles.statValueDark]}>8</Text>
+            <Text style={[styles.statLabel, isDark && styles.statLabelDark]}>Reviews</Text>
+          </View>
+        </View>
+
+        {/* Theme Selection */}
+        <View style={[styles.themeSection, isDark && styles.themeSectionDark]}>
+          <Text style={[styles.themeSectionTitle, isDark && styles.themeSectionTitleDark]}>Appearance</Text>
+          <View style={styles.themeOptions}>
+            {themeOptions.map((option) => (
+              <TouchableOpacity
+                key={option.value}
+                style={[
+                  styles.themeOption,
+                  themeMode === option.value && styles.themeOptionActive,
+                  isDark && styles.themeOptionDark,
+                  themeMode === option.value && isDark && styles.themeOptionActiveDark,
+                ]}
+                onPress={() => setThemeMode(option.value)}
+              >
+                <Ionicons 
+                  name={option.icon as any} 
+                  size={24} 
+                  color={themeMode === option.value ? '#007AFF' : (isDark ? '#999' : '#666')} 
+                />
+                <Text style={[
+                  styles.themeOptionText,
+                  themeMode === option.value && styles.themeOptionTextActive,
+                  isDark && styles.themeOptionTextDark,
+                ]}>
+                  {option.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
 
         {/* Menu Items */}
-        <View style={styles.menuSection}>
+        <View style={[styles.menuSection, isDark && styles.menuSectionDark]}>
           {menuItems.map((item, index) => (
             <TouchableOpacity
               key={item.id}
               style={[
                 styles.menuItem,
                 index === menuItems.length - 1 && styles.menuItemLast,
+                isDark && styles.menuItemDark,
               ]}
             >
               <View style={styles.menuItemLeft}>
-                <View style={styles.menuIconContainer}>
+                <View style={[styles.menuIconContainer, isDark && styles.menuIconContainerDark]}>
                   <Ionicons name={item.icon as any} size={22} color="#007AFF" />
                 </View>
-                <Text style={styles.menuItemText}>{item.label}</Text>
+                <Text style={[styles.menuItemText, isDark && styles.menuItemTextDark]}>{item.label}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color="#999" />
+              <Ionicons name="chevron-forward" size={20} color={isDark ? '#666' : '#999'} />
             </TouchableOpacity>
           ))}
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <TouchableOpacity style={[styles.logoutButton, isDark && styles.logoutButtonDark]} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={22} color="#FF3B30" />
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
@@ -279,5 +320,113 @@ const styles = StyleSheet.create({
     color: '#999',
     marginTop: 24,
     marginBottom: 40,
+  },
+  // Dark mode styles
+  containerDark: {
+    backgroundColor: '#000',
+  },
+  headerDark: {
+    backgroundColor: '#1c1c1e',
+  },
+  headerTitleDark: {
+    color: '#fff',
+  },
+  profileCardDark: {
+    backgroundColor: '#1c1c1e',
+  },
+  nameDark: {
+    color: '#fff',
+  },
+  emailDark: {
+    color: '#999',
+  },
+  statsContainerDark: {
+    backgroundColor: '#1c1c1e',
+  },
+  statValueDark: {
+    color: '#fff',
+  },
+  statLabelDark: {
+    color: '#999',
+  },
+  statDividerDark: {
+    backgroundColor: '#2c2c2e',
+  },
+  themeSection: {
+    backgroundColor: '#fff',
+    marginHorizontal: 20,
+    marginTop: 16,
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  themeSectionDark: {
+    backgroundColor: '#1c1c1e',
+  },
+  themeSectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 12,
+  },
+  themeSectionTitleDark: {
+    color: '#fff',
+  },
+  themeOptions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  themeOption: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    gap: 8,
+  },
+  themeOptionDark: {
+    backgroundColor: '#2c2c2e',
+  },
+  themeOptionActive: {
+    backgroundColor: '#F0F8FF',
+    borderColor: '#007AFF',
+  },
+  themeOptionActiveDark: {
+    backgroundColor: '#1a2332',
+    borderColor: '#007AFF',
+  },
+  themeOptionText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#666',
+  },
+  themeOptionTextDark: {
+    color: '#999',
+  },
+  themeOptionTextActive: {
+    color: '#007AFF',
+  },
+  menuSectionDark: {
+    backgroundColor: '#1c1c1e',
+  },
+  menuItemDark: {
+    borderBottomColor: '#2c2c2e',
+  },
+  menuIconContainerDark: {
+    backgroundColor: '#2c2c2e',
+  },
+  menuItemTextDark: {
+    color: '#fff',
+  },
+  logoutButtonDark: {
+    backgroundColor: '#1c1c1e',
   },
 });

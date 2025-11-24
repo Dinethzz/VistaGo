@@ -1,5 +1,6 @@
 import { destinations } from '@/constants/destinations';
 import { useFavorites } from '@/contexts/favorites-context';
+import { useTheme } from '@/contexts/theme-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -13,6 +14,7 @@ export default function DestinationDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { isDark } = useTheme();
   
   const destination = destinations.find(d => d.id === id);
 
@@ -32,7 +34,7 @@ export default function DestinationDetails() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDark && styles.containerDark]}>
       <StatusBar style="light" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.imageContainer}>
@@ -61,73 +63,73 @@ export default function DestinationDetails() {
           </View>
         </View>
 
-        <View style={styles.content}>
+        <View style={[styles.content, isDark && styles.contentDark]}>
           <View style={styles.header}>
             <View>
-              <Text style={styles.name}>{destination.name}</Text>
+              <Text style={[styles.name, isDark && styles.nameDark]}>{destination.name}</Text>
               <View style={styles.locationRow}>
                 <Ionicons name="location" size={18} color="#007AFF" />
-                <Text style={styles.country}>{destination.country}</Text>
+                <Text style={[styles.country, isDark && styles.countryDark]}>{destination.country}</Text>
               </View>
             </View>
-            <View style={styles.ratingContainer}>
+            <View style={[styles.ratingContainer, isDark && styles.ratingContainerDark]}>
               <Ionicons name="star" size={20} color="#FFD700" />
-              <Text style={styles.rating}>{destination.rating}</Text>
+              <Text style={[styles.rating, isDark && styles.ratingDark]}>{destination.rating}</Text>
             </View>
           </View>
 
-          <View style={styles.statsContainer}>
+          <View style={[styles.statsContainer, isDark && styles.statsContainerDark]}>
             <View style={styles.statItem}>
               <Ionicons name="time-outline" size={24} color="#007AFF" />
-              <Text style={styles.statLabel}>Duration</Text>
-              <Text style={styles.statValue}>{destination.duration}</Text>
+              <Text style={[styles.statLabel, isDark && styles.statLabelDark]}>Duration</Text>
+              <Text style={[styles.statValue, isDark && styles.statValueDark]}>{destination.duration}</Text>
             </View>
-            <View style={[styles.statItem, styles.statItemBorder]}>
+            <View style={[styles.statItem, styles.statItemBorder, isDark && styles.statItemBorderDark]}>
               <Ionicons name="pricetag-outline" size={24} color="#007AFF" />
-              <Text style={styles.statLabel}>Price</Text>
-              <Text style={styles.statValue}>${destination.price}</Text>
+              <Text style={[styles.statLabel, isDark && styles.statLabelDark]}>Price</Text>
+              <Text style={[styles.statValue, isDark && styles.statValueDark]}>${destination.price}</Text>
             </View>
             <View style={styles.statItem}>
               <Ionicons name="sunny-outline" size={24} color="#007AFF" />
-              <Text style={styles.statLabel}>Category</Text>
-              <Text style={styles.statValue}>{destination.category}</Text>
+              <Text style={[styles.statLabel, isDark && styles.statLabelDark]}>Category</Text>
+              <Text style={[styles.statValue, isDark && styles.statValueDark]}>{destination.category}</Text>
             </View>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>About</Text>
-            <Text style={styles.description}>{destination.description}</Text>
+            <Text style={[styles.sectionTitle, isDark && styles.sectionTitleDark]}>About</Text>
+            <Text style={[styles.description, isDark && styles.descriptionDark]}>{destination.description}</Text>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Highlights</Text>
+            <Text style={[styles.sectionTitle, isDark && styles.sectionTitleDark]}>Highlights</Text>
             <View style={styles.chipsContainer}>
               {destination.highlights.map((highlight, index) => (
-                <View key={index} style={styles.chip}>
+                <View key={index} style={[styles.chip, isDark && styles.chipDark]}>
                   <Ionicons name="checkmark-circle" size={16} color="#007AFF" />
-                  <Text style={styles.chipText}>{highlight}</Text>
+                  <Text style={[styles.chipText, isDark && styles.chipTextDark]}>{highlight}</Text>
                 </View>
               ))}
             </View>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Activities</Text>
+            <Text style={[styles.sectionTitle, isDark && styles.sectionTitleDark]}>Activities</Text>
             <View style={styles.activitiesList}>
               {destination.activities.map((activity, index) => (
                 <View key={index} style={styles.activityItem}>
                   <Ionicons name="chevron-forward" size={20} color="#007AFF" />
-                  <Text style={styles.activityText}>{activity}</Text>
+                  <Text style={[styles.activityText, isDark && styles.activityTextDark]}>{activity}</Text>
                 </View>
               ))}
             </View>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Best Time to Visit</Text>
-            <View style={styles.timeContainer}>
+            <Text style={[styles.sectionTitle, isDark && styles.sectionTitleDark]}>Best Time to Visit</Text>
+            <View style={[styles.timeContainer, isDark && styles.timeContainerDark]}>
               <Ionicons name="calendar-outline" size={20} color="#007AFF" />
-              <Text style={styles.timeText}>{destination.bestTimeToVisit}</Text>
+              <Text style={[styles.timeText, isDark && styles.timeTextDark]}>{destination.bestTimeToVisit}</Text>
             </View>
           </View>
 
@@ -317,5 +319,57 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
+  },
+  // Dark mode styles
+  containerDark: {
+    backgroundColor: '#000',
+  },
+  contentDark: {
+    backgroundColor: '#000',
+  },
+  nameDark: {
+    color: '#fff',
+  },
+  countryDark: {
+    color: '#999',
+  },
+  ratingContainerDark: {
+    backgroundColor: '#2c2c2e',
+  },
+  ratingDark: {
+    color: '#fff',
+  },
+  statsContainerDark: {
+    backgroundColor: '#1c1c1e',
+  },
+  statItemBorderDark: {
+    borderColor: '#2c2c2e',
+  },
+  statLabelDark: {
+    color: '#999',
+  },
+  statValueDark: {
+    color: '#fff',
+  },
+  sectionTitleDark: {
+    color: '#fff',
+  },
+  descriptionDark: {
+    color: '#999',
+  },
+  chipDark: {
+    backgroundColor: '#2c2c2e',
+  },
+  chipTextDark: {
+    color: '#fff',
+  },
+  activityTextDark: {
+    color: '#fff',
+  },
+  timeContainerDark: {
+    backgroundColor: '#1c1c1e',
+  },
+  timeTextDark: {
+    color: '#fff',
   },
 });

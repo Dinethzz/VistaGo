@@ -11,9 +11,9 @@
  * - Prevents app crashes from propagating
  */
 
+import { Ionicons } from '@expo/vector-icons';
 import React, { Component, ReactNode } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   children: ReactNode;

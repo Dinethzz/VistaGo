@@ -4,10 +4,10 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import 'react-native-reanimated';
 
+import { ErrorBoundary } from '@/components/error-boundary';
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
 import { FavoritesProvider } from '@/contexts/favorites-context';
 import { ThemeProvider, useTheme } from '@/contexts/theme-context';
-import { ErrorBoundary } from '@/components/error-boundary';
 
 export const unstable_settings = {
   anchor: '(tabs)',

@@ -3,6 +3,7 @@ import { destinations } from '@/constants/destinations';
 import { useAuth } from '@/contexts/auth-context';
 import { useTheme } from '@/contexts/theme-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -10,6 +11,7 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 export default function HomeScreen() {
   const { user } = useAuth();
   const { isDark } = useTheme();
+  const router = useRouter();
   const featuredDestinations = destinations.slice(0, 3);
   const popularDestinations = destinations.slice(3, 6);
 
@@ -43,12 +45,6 @@ export default function HomeScreen() {
             <Ionicons name="notifications-outline" size={24} color={isDark ? '#fff' : '#333'} />
           </TouchableOpacity>
         </View>
-
-        {/* Search Bar */}
-        <TouchableOpacity style={[styles.searchBar, isDark && styles.searchBarDark]}>
-          <Ionicons name="search-outline" size={20} color={isDark ? '#666' : '#999'} />
-          <Text style={[styles.searchPlaceholder, isDark && styles.searchPlaceholderDark]}>Search destinations...</Text>
-        </TouchableOpacity>
 
         {/* Categories */}
         <View style={styles.section}>
@@ -100,12 +96,14 @@ export default function HomeScreen() {
               <Text style={styles.seeAll}>See all</Text>
             </TouchableOpacity>
           </View>
-          {popularDestinations.map((destination) => (
-            <DestinationCard 
-              key={destination.id} 
-              destination={destination}
-            />
-          ))}
+          <View style={styles.popularContainer}>
+            {popularDestinations.map((destination) => (
+              <DestinationCard 
+                key={destination.id} 
+                destination={destination}
+              />
+            ))}
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -144,7 +142,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: '700',
     color: '#333',
   },
@@ -155,27 +153,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    marginHorizontal: 20,
-    marginTop: 20,
-    marginBottom: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderRadius: 12,
-    gap: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  searchPlaceholder: {
-    fontSize: 15,
-    color: '#999',
   },
   section: {
     marginBottom: 24,
@@ -191,6 +168,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#333',
+    paddingHorizontal: 20,
+    marginBottom: 16,
   },
   seeAll: {
     fontSize: 14,
@@ -222,6 +201,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 16,
   },
+  popularContainer: {
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
   // Dark mode styles
   containerDark: {
     backgroundColor: '#000',
@@ -234,12 +217,6 @@ const styles = StyleSheet.create({
   },
   titleDark: {
     color: '#fff',
-  },
-  searchBarDark: {
-    backgroundColor: '#1c1c1e',
-  },
-  searchPlaceholderDark: {
-    color: '#666',
   },
   sectionTitleDark: {
     color: '#fff',

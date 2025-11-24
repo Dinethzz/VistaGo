@@ -41,8 +41,8 @@ export default function HomeScreen() {
               <Text style={[styles.title, isDark && styles.titleDark]}>Where do you want to go?</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.notificationButton}>
-            <Ionicons name="notifications-outline" size={24} color={isDark ? '#fff' : '#333'} />
+          <TouchableOpacity style={[styles.notificationButton, isDark && styles.notificationButtonDark]}>
+            <Ionicons name="notifications-outline" size={24} color="#000" />
           </TouchableOpacity>
         </View>
 
@@ -217,6 +217,9 @@ const styles = StyleSheet.create({
   },
   titleDark: {
     color: '#fff',
+  },
+  notificationButtonDark: {
+    backgroundColor: '#2c2c2e',
   },
   sectionTitleDark: {
     color: '#fff',
